@@ -1,3 +1,5 @@
-
+ayumu/account/__pycache__/
+ayumu/account/migrations/__pycache__/
+ayumu/ayumu/__pycache__/
 .DS_Store
 .idea
