@@ -1,36 +1,79 @@
 # https://proglib.io/p/kak-podruzhit-python-i-bazy-dannyh-sql-podrobnoe-rukovodstvo-2020-02-27/amp/
-
-import sqlite3
-from sqlite3 import Error
+from db_connect import *
 
 
-""" ПОДКЛЮЧЕНИЕ К БД """
+create_dictionary_words = """
+INSERT INTO
+training_translation (eng, rus)
+VALUES
+('be', 'быть'),
+('of', 'из'),
+('of', 'о'),
+('and', 'и'),
+('in', 'в'),
+('in', 'на'),
+('to', 'к'),
+('to', 'в'),
+('to', 'до'),
+('to', 'на'),
+('to', 'для'),
+('have', 'иметь'),
+('it', 'это'),
+('it', 'он'),
+('it', 'она'),
+('it', 'него'),
+('for', 'для'),
+('for', 'за'),
+('for', 'на'),
+('I', 'я'),
+('that', 'тот'),
+('that', 'что'),
+('you', 'ты'),
+('you', 'вы'),
+('you', 'тебя'),
+('you', 'вас'),
+('you', 'вам'),
+('you', 'вами'),
+('he', 'он'),
+('on', 'на'),
+('on', 'по'),
+('on', 'о'),
+('on', 'в'),
+('with', 'с'),
+('do', 'делать'),
+('at', 'на'),
+('at', 'в'),
+('at', 'при'),
+('by', 'по'),
+('by', 'на'),
+('not', 'не'),
+('not', 'нет'),
+('this', 'это'),
+('this', 'этот'),
+('this', 'эта'),
+('but', 'но'),
+('but', 'а'),
+('from', 'из'),
+('from', 'от'),
+('from', 'с'),
+('they', 'они'),
+('his', 'его'),
+('his', 'свой'),
+('his', 'своё'),
+('she', 'она'),
+('or', 'или'),
+('which', 'который'),
+('which', 'какой'),
+('as', 'как'),
+('as', 'в качестве'),
+('we', 'мы'),
+('say', 'сказать'),
+('say', 'говорить'),
+('say', 'слово'),
+('say', 'мнение');
+"""
 
-def create_connection(path):
-	connection = None
-	try:
-		connection = sqlite3.connect(path)
-		print("Connection SQLite DB successful.")
-	except Error as e:
-		print(f"The error '{e}' occurred.")
-
-	return connection
-
-
-
-""" ВЫПОЛНЕНИЕ ЗАПРОСОВ НА СОЗДАНИЕ ТАБЛИЦ """
-
-def execute_query(connection, query):
-	cursor = connection.cursor()
-	try:
-		cursor.execute(query)
-		connection.commit()
-		print("Query executed successfully.")
-	except Error as e:
-		print(f"The error '{e}' occurred.")
-
-# создаем соединение с БД
-connection = create_connection("db.sqlite3")
+execute_query(connection, create_dictionary_words)
 
 '''
 
@@ -136,19 +179,6 @@ execute_query(connection, create_posts)
 execute_query(connection, create_comments)
 execute_query(connection, create_likes)
 
-'''
-
-""" ИЗВЛЕЧЕНИЕ ЗАПИСЕЙ ИЗ ТАБЛИЦ """
-
-def execute_read_query(connection, query):
-	cursor = connection.cursor()
-	result = None
-	try:
-		cursor.execute(query)
-		result = cursor.fetchall()
-		return result
-	except Error as e:
-		print(f"The error '{e}' occurred.")
 
 
 # SELECT
@@ -277,3 +307,4 @@ execute_query(connection, delete_comment)
 select_comment = "SELECT text FROM comments WHERE id = 5"
 text_comment = execute_read_query(connection, select_comment)
 print(text_comment)
+'''
