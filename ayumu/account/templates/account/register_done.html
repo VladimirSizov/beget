@@ -1,0 +1,9 @@
+<!-- страница завершения регистрации нового пользователя -->
+{% extends 'base.html' %}
+
+{% block title %}welcome{% endblock %}
+
+{% block content %}
+    <h1>WELCOME</h1>
+    <p>Your account has been successfully created. Now you can <a href="{% url 'login' %}">log in</a></p>
+{% endblock %}

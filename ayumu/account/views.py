@@ -3,10 +3,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from .forms import LoginForm
+from .forms import LoginForm, UserRegistrationForm
 
 
-#
+# авторизация пользователя
 def user_login(request):
 	if request.method == 'POST':
 		form = LoginForm(request.POST)
@@ -28,8 +28,27 @@ def user_login(request):
 	return render(request, 'account/login.html', {'form': form})
 
 
+# регистрация пользователя
+def register(request):
+	if request.method == 'POST':
+		user_form = UserRegistrationForm(request.POST)
+		if user_form.is_valid():
+			# создаем нового пользователя, но пока не сохраняем в БД
+			new_user = user_form.save(commit=False)
+			# задаем пользователю зашифрованный пароль
+			new_user.set_password(user_form.cleaned_data['password'])
+			# сохраняем пользователя в БД
+			new_user.save()
+			return render(request, 'account/register_done.html', {'new_user': new_user})
+	else:
+		user_form = UserRegistrationForm()
+	return render(request, 'account/register.html', {'user_form': user_form})
+
+
 # обработчик для отображения рабочего стола,
 # который пользователь увидит при входе в свой аккаунт
 @login_required # авторизован ли пользователь
 def dashboard(request):
 	return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+
+

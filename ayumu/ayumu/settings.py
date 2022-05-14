@@ -129,3 +129,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGIN_URL = 'login'
 LOGOUT_URL= 'logout'
+
+# отправка эмейлов
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'site.ayumu@gmail.com'
+EMAIL_HOST_PASSWORD = 'cehjuq-zaxmy1-Sarxoh'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# from django.core.mail import send_mail
+# send_mail('Django', 'Text message', 'site.ayumu@gmail.com', ['vladimirsizov@yandex.ru'], fail_silently=False,)
+
