@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}INTERVIEW{% endblock %}
+
+{% block content %}
+    {% for word in words %}
+        <h2>
+            <p>{{ word.eng }} значит {{ word.rus }}</p>
+        </h2>
+    {% endfor %}
+{% endblock %}
