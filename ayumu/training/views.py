@@ -1,11 +1,40 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-from .models import Translation
+from .models import Translation, Result
+from .forms import InterviewForm
 
 
+# опрос
 def interview(request):
+
 	words = Translation.words.all()
-	return render(request, 'training/interview.html', {'words': words})
+	word = words.get(id=1)
+
+	question = word.eng
+	if request.method == 'POST':
+		form = InterviewForm(request.POST)
+		if form.is_valid():
+			username_id = request.user.id
+			answer = form.cleaned_data['answer']
+			control_answer = word.rus
+			status = False
+			if answer == control_answer:
+				status = True
+			result = Result(question=question, answer=answer, status=status, username_id=username_id)
+			result.save()
+		else:
+			form = InterviewForm()
+			return render(request, 'training/interview.html', {'question': question, 'form': form})
+
+
+
+
+
+
+
+
+
+
+	return render(request, 'training/interview.html', {'word': word})
 
 
 

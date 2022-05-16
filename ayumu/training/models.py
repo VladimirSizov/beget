@@ -22,7 +22,7 @@ class Translation(models.Model):
 
 class Result(models.Model):
 	""" результаты тестов """
-	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='results')
+	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='results') # 57
 	answer = models.CharField(max_length=100)
 	question = models.CharField(max_length=100)
 	status = models.BooleanField(blank=False) # правильный ответ true/false
