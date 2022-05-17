@@ -4,10 +4,17 @@ from db_connect import *
 # удаление всех строк из таблицы training_result
 # delet = "DELETE FROM training_result"
 # execute_query(connection, delet)
+'''
+i = "DELETE FROM training_result" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_result'" # обнуление инкремента
+execute_query(connection, i)
 
 '''
-delet = "DELETE FROM training_translation"
-execute_query(connection, delet)
+i = "DELETE FROM training_translation" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_translation'" # обнуление инкремента
+execute_query(connection, i)
 
 create_dictionary_words = """
 INSERT INTO
@@ -79,11 +86,10 @@ VALUES
 ('say', 'слово'),
 ('say', 'мнение');
 """
-
 execute_query(connection, create_dictionary_words)
 
 
-
+'''
 create_users_table = """
 CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
