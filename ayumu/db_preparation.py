@@ -1,6 +1,13 @@
 # https://proglib.io/p/kak-podruzhit-python-i-bazy-dannyh-sql-podrobnoe-rukovodstvo-2020-02-27/amp/
 from db_connect import *
 
+# удаление всех строк из таблицы training_result
+# delet = "DELETE FROM training_result"
+# execute_query(connection, delet)
+
+'''
+delet = "DELETE FROM training_translation"
+execute_query(connection, delet)
 
 create_dictionary_words = """
 INSERT INTO
@@ -75,7 +82,7 @@ VALUES
 
 execute_query(connection, create_dictionary_words)
 
-'''
+
 
 create_users_table = """
 CREATE TABLE IF NOT EXISTS users (
@@ -308,3 +315,4 @@ select_comment = "SELECT text FROM comments WHERE id = 5"
 text_comment = execute_read_query(connection, select_comment)
 print(text_comment)
 '''
+

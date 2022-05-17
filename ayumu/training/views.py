@@ -1,15 +1,18 @@
 from django.shortcuts import render
 from .models import Translation, Result
 from .forms import InterviewForm
+from django.http import HttpResponseRedirect
+
 
 
 # опрос
 def interview(request):
-
 	words = Translation.words.all()
 	word = words.get(id=1)
+	print(word)
 
 	question = word.eng
+
 	if request.method == 'POST':
 		form = InterviewForm(request.POST)
 		if form.is_valid():
@@ -21,20 +24,11 @@ def interview(request):
 				status = True
 			result = Result(question=question, answer=answer, status=status, username_id=username_id)
 			result.save()
-		else:
-			form = InterviewForm()
-			return render(request, 'training/interview.html', {'question': question, 'form': form})
-
-
-
-
-
-
-
-
-
-
-	return render(request, 'training/interview.html', {'word': word})
+			return HttpResponseRedirect(request.path_info)
+	else:
+		form = InterviewForm()
+		return render(request, 'training/interview.html', {'question': question, 'form': form})
+	# return render(request, 'training/interview.html', {'word': word})
 
 
 
