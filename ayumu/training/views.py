@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 
 # опрос
 def interview(request):
+
+	right = [2, 3, 4]
 	words = Translation.words.all()
 	word = words.get(id=3)
 
@@ -42,7 +44,8 @@ def interview(request):
 			return HttpResponseRedirect(request.path_info)
 	else:
 		form = InterviewForm()
-		return render(request, 'training/interview.html', {'previous_result': previous_result, 'question': question, 'form': form})
+		context = {'right': right, 'previous_result': previous_result, 'question': question, 'form': form}
+		return render(request, 'training/interview.html', context)
 
 
 # при неправильном ответе пользователя - получение правильных ответов, для строки пояснения
