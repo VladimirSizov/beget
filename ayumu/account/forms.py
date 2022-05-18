@@ -10,7 +10,6 @@ class LoginForm(forms.Form):
 
 class UserRegistrationForm(forms.ModelForm):
 	""" форма регистрации нового пользователя """
-	#date_of_birth
 	password = forms.CharField(label='Password', widget=forms.PasswordInput)
 	password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
 
