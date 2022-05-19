@@ -1,12 +1,14 @@
 import re
 from django.shortcuts import render
-from .models import Translation, Result, Current
+from .models import Translation, Result, Current, ENG, RUS
 from .forms import InterviewForm
 from django.http import HttpResponseRedirect
+from .dict import Dict
 
 
 # опрос
 def interview(request):
+
 	username_id = request.user.id
 	words = Translation.words.all()
 	id_word = get_id_current_word(request)
@@ -32,6 +34,10 @@ def interview(request):
 		previous_result = ''
 	# если пользователь отправляет ответ
 	if request.method == 'POST':
+		# полное обновление словаря ENG_RUS
+		#upd_dict(request)
+		# проверка на ошибки
+		# test_dict()
 		form = InterviewForm(request.POST)
 		if form.is_valid():
 			answer = form.cleaned_data['answer']
@@ -94,8 +100,47 @@ def delete_current_word(request):
 
 # создаем новый массив тестов
 def get_array_test(username_id):
-	arr_words = [1, 2, 3, 4, 5]
+	arr_words = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	current = Current.objects.get(username_id=username_id)
 	current.tested_words = arr_words
 	current.save()
+
+# заполняем словари словами
+def upd_dict(request):
+	all_words = [Dict.d_1_1000, Dict.d_1001_2000, Dict.d_2001_3000, Dict.d_3001_4000, Dict.d_4001_5000]
+	for words in all_words:
+		for word in words:
+			for rus in word[1]:
+				eng = ENG(eng=word[0])
+				# проверяем ENG что слова еще нет в словаре
+				try:
+					ENG.objects.get(eng=eng)
+				except:
+					# если ENG нет - то добавляем
+					eng.save()
+				eng_id = ENG.objects.get(eng=eng).id
+
+				rus = RUS(rus=rus)
+				# проверяем RUS что слова еще нет в словаре
+				try:
+					RUS.objects.get(rus=rus)
+				except:
+					# если RUS нет - то добавляем
+					rus.save()
+				rus_value = RUS.objects.get(rus=rus)
+				# добавляем связь многие ко многим
+				rus_value.english.add(eng_id)
+
+
+def test_dict():
+	# запросы к БД тестирование на ошибки
+	id_eng = 8
+	id_rus = 6
+	# по англ ключу все знач рус
+	eng_relation = ENG.objects.get(id=id_eng).rus_set.all()
+	print(eng_relation)
+	# по рус ключу все знач англ
+	rus_relation =ENG.objects.filter(rus__id=id_rus)
+	print(rus_relation)
+
 

@@ -1,6 +1,13 @@
 # https://proglib.io/p/kak-podruzhit-python-i-bazy-dannyh-sql-podrobnoe-rukovodstvo-2020-02-27/amp/
 from db_connect import *
-
+i = "DELETE FROM training_eng" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_eng'" # обнуление инкремента
+execute_query(connection, i)
+i = "DELETE FROM training_rus" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_rus'" # обнуление инкремента
+execute_query(connection, i)
 
 
 
@@ -25,67 +32,7 @@ create_dictionary_words = """
 INSERT INTO
 training_translation (eng, rus)
 VALUES
-('be', 'быть'),
-('of', 'из'),
-('of', 'о'),
-('and', 'и'),
-('in', 'в'),
-('in', 'на'),
-('to', 'к'),
-('to', 'в'),
-('to', 'до'),
-('to', 'на'),
-('to', 'для'),
-('have', 'иметь'),
-('it', 'это'),
-('it', 'он'),
-('it', 'она'),
-('it', 'него'),
-('for', 'для'),
-('for', 'за'),
-('for', 'на'),
-('I', 'я'),
-('that', 'тот'),
-('that', 'что'),
-('you', 'ты'),
-('you', 'вы'),
-('you', 'тебя'),
-('you', 'вас'),
-('you', 'вам'),
-('you', 'вами'),
-('he', 'он'),
-('on', 'на'),
-('on', 'по'),
-('on', 'о'),
-('on', 'в'),
-('with', 'с'),
-('do', 'делать'),
-('at', 'на'),
-('at', 'в'),
-('at', 'при'),
-('by', 'по'),
-('by', 'на'),
-('not', 'не'),
-('not', 'нет'),
-('this', 'это'),
-('this', 'этот'),
-('this', 'эта'),
-('but', 'но'),
-('but', 'а'),
-('from', 'из'),
-('from', 'от'),
-('from', 'с'),
-('they', 'они'),
-('his', 'его'),
-('his', 'свой'),
-('his', 'своё'),
-('she', 'она'),
-('or', 'или'),
-('which', 'который'),
-('which', 'какой'),
-('as', 'как'),
-('as', 'в качестве'),
-('we', 'мы'),
+(
 ('say', 'сказать'),
 ('say', 'говорить'),
 ('say', 'слово'),

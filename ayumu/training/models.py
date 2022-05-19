@@ -55,4 +55,3 @@ class RUS(models.Model):
 	class Meta:
 		ordering = ('rus',)
 
-
