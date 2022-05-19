@@ -13,16 +13,14 @@ class Translation(models.Model):
 	""" таблица значений слов """
 	eng = models.CharField(max_length=100)
 	rus = models.CharField(max_length=100)
-
 	objects = models.Manager() # менеджер QuerySet по умолч
 	words = WordsManager() # менеджер QuerySet наш
-
 	def __str__(self):
 		return self.eng
 
+
 class Result(models.Model):
 	""" результаты тестов """
-
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='results') # 57
 	answer = models.CharField(max_length=100)
 	question = models.CharField(max_length=100)
@@ -30,9 +28,31 @@ class Result(models.Model):
 	datetime = models.DateTimeField(default=timezone.now)
 	objects = models.Manager()
 
+
 class Current(models.Model):
 	""" текущие состояния пользователя """
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='currents')
 	tested_words = models.CharField(max_length=100)
 	objects = models.Manager()
+
+
+class ENG(models.Model):
+	""" слварь английских слов """
+	eng = models.CharField(max_length=100)
+	objects = models.Manager()
+	def __str__(self):
+		return self.eng
+	class Meta:
+		ordering = ('eng',)
+
+class RUS(models.Model):
+	""" слварь русских слов """
+	rus = models.CharField(max_length=100)
+	english = models.ManyToManyField(ENG)
+	objects = models.Manager()
+	def __str__(self):
+		return self.rus
+	class Meta:
+		ordering = ('rus',)
+
 
