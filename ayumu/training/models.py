@@ -30,4 +30,9 @@ class Result(models.Model):
 	datetime = models.DateTimeField(default=timezone.now)
 	objects = models.Manager()
 
+class Current(models.Model):
+	""" текущие состояния пользователя """
+	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='currents')
+	tested_words = models.CharField(max_length=100)
+	objects = models.Manager()
 
