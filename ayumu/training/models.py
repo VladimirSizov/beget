@@ -5,10 +5,15 @@ from django.contrib.auth.models import User
 
 class Result(models.Model):
 	""" результаты тестов """
+	TYPE_DICT = [
+		('ER', 'ER'),
+		('RE', 'RE')
+	]
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='results') # 57
 	answer = models.CharField(max_length=100)
 	question = models.CharField(max_length=100)
 	status = models.BooleanField(blank=False) # правильный ответ true/false
+	test_type = models.CharField(max_length=2, choices=TYPE_DICT, default='ER')  # True = eng-rus
 	datetime = models.DateTimeField(default=timezone.now)
 	objects = models.Manager()
 
@@ -20,7 +25,7 @@ class Current(models.Model):
 		('RE', 'RE')
 	]
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='currents')
-	tested_words = models.CharField(max_length=100)
+	tested_words = models.CharField(max_length=100, default=[])
 	test_type = models.CharField(max_length=2, choices=TYPE_DICT, default='ER') # True = eng-rus
 	type_increment = models.IntegerField(default=2) # обратный отчет попыток в этой языковой форме (ER или RE)
 	objects = models.Manager()
