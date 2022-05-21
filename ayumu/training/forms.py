@@ -1,5 +1,4 @@
 from django import forms
-from .models import Translation, Result
 
 
 class InterviewForm(forms.Form):

@@ -1,6 +1,6 @@
 import re
 from django.shortcuts import render
-from .models import Translation, Result, Current, ENG, RUS
+from .models import Result, Current, ENG, RUS
 from .forms import InterviewForm
 from django.http import HttpResponseRedirect
 from .dict import Dict
@@ -10,12 +10,10 @@ from .dict import Dict
 def interview(request):
 	username_id = request.user.id
 	question = get_current_word(request) # слово для запроса
-
 	# проверка предыдущий результат на правильный ответ
 	previous_result = ''
 	try:
 		result = Result.objects.filter(username_id=username_id).latest('datetime')
-		print(result)
 		if result.status == True:
 			# информирование пользователя о правильном ответе
 			previous_result = 'ALL RIGHT!'
