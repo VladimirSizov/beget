@@ -1,12 +1,19 @@
 # https://proglib.io/p/kak-podruzhit-python-i-bazy-dannyh-sql-podrobnoe-rukovodstvo-2020-02-27/amp/
 from db_connect import *
+
 i = "DELETE FROM training_eng" # удаление данных из таблицы
 execute_query(connection, i)
 i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_eng'" # обнуление инкремента
 execute_query(connection, i)
+
 i = "DELETE FROM training_rus" # удаление данных из таблицы
 execute_query(connection, i)
 i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_rus'" # обнуление инкремента
+execute_query(connection, i)
+
+i = "DELETE FROM training_rus_english" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_rus_english'" # обнуление инкремента
 execute_query(connection, i)
 
 

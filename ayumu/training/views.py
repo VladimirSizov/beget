@@ -8,12 +8,8 @@ from .dict import Dict
 
 # опрос
 def interview(request):
-
 	username_id = request.user.id
-	words = Translation.words.all()
-	id_word = get_id_current_word(request)
-	word = words.get(id=id_word)
-	question = word.eng
+	question = get_current_word(request) # слово для запроса
 
 	# проверка предыдущий результат на правильный ответ
 	previous_result = ''
@@ -25,7 +21,7 @@ def interview(request):
 			previous_result = 'ALL RIGHT!'
 		if result.status == False:
 			# найти правильные и показать
-			arr_correct_answers = get_correct_answer(result.question)
+			arr_correct_answers = get_correct_answer(request, result.question)
 			correct_answers = ''
 			for element in arr_correct_answers:
 				correct_answers += element + ', '
@@ -42,7 +38,7 @@ def interview(request):
 		if form.is_valid():
 			answer = form.cleaned_data['answer']
 			status = False
-			correct_answers = get_correct_answer(question)
+			correct_answers = get_correct_answer(request, question) # получаем список корректных ответов
 			if answer in correct_answers:
 				status = True
 			result = Result(question=question, answer=answer, status=status, username_id=username_id)
@@ -55,16 +51,39 @@ def interview(request):
 		return render(request, 'training/interview.html', context)
 
 
+##################################################
+
 # при неправильном ответе пользователя - получение правильных ответов, для строки пояснения
-def get_correct_answer(question):
+def get_correct_answer(request, question):
+	username_id = request.user.id
+	test_type = Current.objects.get(username_id=username_id).test_type
 	arr = []
-	eng = Translation.words.filter(eng=question)
-	rus = Translation.words.filter(rus=question)
-	for word in eng:
-		arr.append(word.rus)
-	for word in rus:
-		arr.append(word.eng)
+	if test_type == 'ER':
+		# по англ ключу все знач рус
+		eng_relation = ENG.objects.get(eng=question).rus_set.all()
+		for word in eng_relation:
+			arr.append(word.rus)
+	if test_type == 'RE':
+		# по рус ключу все знач англ
+		rus_relation = ENG.objects.filter(rus=question)
+		for word in rus_relation:
+			arr.append(word.eng)
 	return arr
+
+
+# получаем слово для теста
+def get_current_word(request):
+	username_id = request.user.id
+	test_type = Current.objects.get(username_id=username_id).test_type
+	word = ''
+	word_id = get_id_current_word(request)
+	# выбираем словарь
+	if test_type == 'ER':
+		word = ENG.objects.get(id=word_id).eng
+	if test_type == 'RE':
+		word = RUS.objects.get(id=word_id).rus
+	return word
+
 
 # получаем id-слова для теста
 def get_id_current_word(request):
@@ -80,7 +99,7 @@ def get_id_current_word(request):
 	text = result.tested_words
 	arr_words = re.findall('([-+]?\d+)', text)
 	if len(arr_words) == 0:
-		get_array_test(username_id)
+		get_array_test(request) # создаем новый масссив с id слов для теста
 		result = Current.objects.get(username_id=username_id)
 		text = result.tested_words
 		arr_words = re.findall('([-+]?\d+)', text)
@@ -88,10 +107,10 @@ def get_id_current_word(request):
 	word = arr_words.pop()
 	return word
 
-# получаем id-слова для теста из временного хранилища
+# удаляем использованное id-слова для теста из временного хранилища
 def delete_current_word(request):
 	username_id = request.user.id
-	result = Current.objects.get(username_id=username_id)
+	result = Current.objects.get(username_id=username_id) # это обязательно?
 	text = result.tested_words
 	arr_words = re.findall('([-+]?\d+)', text)
 	word = arr_words.pop()
@@ -99,12 +118,18 @@ def delete_current_word(request):
 	result.save()
 
 # создаем новый массив тестов
-def get_array_test(username_id):
+def get_array_test(request):
+	username_id = request.user.id
+	type_increment = Current.objects.get(username_id=username_id).type_increment # осталось раз для этого типа (ER или RE)
+	test_type = Current.objects.get(username_id=username_id).test_type # текущий тип тестирования
+
 	arr_words = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	current = Current.objects.get(username_id=username_id)
 	current.tested_words = arr_words
 	current.save()
 
+
+#######################################################
 # заполняем словари словами
 def upd_dict(request):
 	all_words = [Dict.d_1_1000, Dict.d_1001_2000, Dict.d_2001_3000, Dict.d_3001_4000, Dict.d_4001_5000]
