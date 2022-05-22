@@ -49,7 +49,6 @@ def interview(request):
 			lex_stat.status = status
 			lex_stat.question = question
 			lex_stat.save_result()
-
 			# сохраняем результаты ответов
 			result = Result(question=question, answer=answer, status=status, username_id=username_id, test_type=test_type)
 			result.save()

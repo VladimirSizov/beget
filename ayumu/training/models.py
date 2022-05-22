@@ -50,7 +50,7 @@ class Lexicon(models.Model):
 	""" статистика ответов тестирования """
 	word = models.CharField(max_length=100)
 	results = models.CharField(max_length=100, default=[])
-	percent = models.IntegerField(default=50)
+	percent = models.IntegerField(default=0)
 	attempts = models.IntegerField(default=0)
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lexicon')
 	objects = models.Manager()

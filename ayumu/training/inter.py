@@ -1,5 +1,6 @@
 import re
 from .models import Current, ENG, RUS, Lexicon
+from .create_test import CreateTest
 
 
 class StatAnsLex():
@@ -10,6 +11,8 @@ class StatAnsLex():
 		self.user_id = request.user.id
 		self.question = ''
 		self.status = False
+		self.results = []
+		self.attempts = 0
 
 	# получаем предыдущие результаты,
 	def check(self):
@@ -29,13 +32,30 @@ class StatAnsLex():
 			results.append(1)
 		else:
 			results.append(0)
+		self.results = results
 		return results
+
+	# обновления процента правильных ответов
+	def update_percent(self):
+		results = self.results # [-10:]
+		attempts = len(results)
+		if attempts == 0:
+			percent = 0
+		else:
+			sum_i = 0
+			for i in results:
+				sum_i += int(i)
+			percent = sum_i * 100 / attempts
+			self.attempts = attempts
+		return percent
 
 	# сохранение в бд
 	def save_result(self):
 		results = self.update_results()
 		lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question)
 		lexicon.results = results
+		lexicon.percent = self.update_percent()
+		lexicon.attempts = self.attempts
 		lexicon.save()
 
 
@@ -124,16 +144,26 @@ class Interview():
 		current = Current.objects.get(username_id=self.user_id)
 		# осталось раз для этого типа (ER или RE)
 		type_increment = Current.objects.get(username_id=self.user_id).type_increment
+		print('type_increment')
+		print(type_increment)
+		test_type = ''
 		if type_increment == 0:
 			# базовое количество подходов в одной языковой группе при смене языковой группы
-			current.type_increment = 5 + 1
+			current.type_increment = 1 + 1
 			test_type = Current.objects.get(username_id=self.user_id).test_type  # текущий тип тестирования
+			print('test_type')
+			print(test_type)
 			# меняем язык
 			if test_type == 'ER':
 				current.test_type = 'RE'
+				print('test_type')
+				print(test_type)
 			if test_type == 'RE':
-				current.test_type = 'ER'
-		tested_words = [1, 2, 3, 4]
+				current.test_type  = 'ER'
+				print('test_type')
+				print(test_type)
+		create_test = CreateTest(test_type)
+		tested_words = create_test.get_id_words()
 		current.type_increment -= 1
 		current.tested_words = tested_words
 		# сохраняем
