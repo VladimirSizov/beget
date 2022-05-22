@@ -1,5 +1,43 @@
 import re
-from .models import Current, ENG, RUS
+from .models import Current, ENG, RUS, Lexicon
+
+
+class StatAnsLex():
+	""" статистика по ответам """
+
+	def __init__(self, request):
+		self.request = request
+		self.user_id = request.user.id
+		self.question = ''
+		self.status = False
+
+	# получаем предыдущие результаты,
+	def check(self):
+		try:
+			lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question).results
+		except:
+			lexicon = Lexicon(username_id=self.user_id, word=self.question)
+			lexicon.save()
+			lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question).results
+		return lexicon
+
+	# получение старых результатов
+	def update_results(self):
+		results = self.check()
+		results = re.findall('([-+]?\d+)', results)
+		if self.status == True:
+			results.append(1)
+		else:
+			results.append(0)
+		return results
+
+	# сохранение в бд
+	def save_result(self):
+		results = self.update_results()
+		lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question)
+		lexicon.results = results
+		lexicon.save()
+
 
 
 class PreviousResult():
@@ -11,7 +49,7 @@ class PreviousResult():
 		self.question = ''
 		self.test_type = ''
 
-
+	# получение правильного ответа на вопрос
 	def get_correct_answer(self):
 		arr = []
 		if self.test_type == 'ER':
@@ -38,7 +76,6 @@ class Interview():
 		self.question = ''
 		self.test_type = 'ER' # только для записи в Result
 
-
 	# получаем слово для теста
 	def get_current_word(self):
 		# проверяем есть ли запись о пользователе, если нет создаем пустую
@@ -58,7 +95,6 @@ class Interview():
 		self.question = word
 		return word
 
-
 	# получаем id-слова для теста
 	def get_id_current_word(self):
 		# пробуем получить слово для теста
@@ -74,7 +110,6 @@ class Interview():
 		word = arr_words.pop()
 		return word
 
-
 	# удаляем использованное id-слова для теста из временного хранилища
 	def correct_status(self):
 		current = Current.objects.get(username_id=self.user_id)
@@ -83,7 +118,6 @@ class Interview():
 		tested_word.pop()
 		current.tested_words = tested_word
 		current.save()
-
 
 	# создаем новый массив тестов
 	def get_array_test(self):
@@ -99,12 +133,11 @@ class Interview():
 				current.test_type = 'RE'
 			if test_type == 'RE':
 				current.test_type = 'ER'
-		tested_words = [1, 2, 3]
+		tested_words = [1, 2, 3, 4]
 		current.type_increment -= 1
 		current.tested_words = tested_words
 		# сохраняем
 		current.save()
-
 
 	# при неправильном ответе пользователя - получение правильных ответов, для строки пояснения
 	def get_correct_answer(self):
@@ -121,6 +154,7 @@ class Interview():
 			for word in rus_relation:
 				arr.append(word.eng)
 		return arr
+
 
 """
 # по АНГ id - РУС значения

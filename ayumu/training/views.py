@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .models import Result
+from .models import Result, Lexicon
 from .forms import InterviewForm
-from .inter import Interview, PreviousResult
+from .inter import Interview, PreviousResult, StatAnsLex
 from .create_data import CreateData # используется для полное обновление словаря ENG_RUS в CreateData.upd_dict()
 
 
@@ -44,6 +44,13 @@ def interview(request):
 			correct_answers = interview.get_correct_answer() # получаем список корректных ответов
 			if answer in correct_answers:
 				status = True
+			# прописываем статистику
+			lex_stat = StatAnsLex(request)
+			lex_stat.status = status
+			lex_stat.question = question
+			lex_stat.save_result()
+
+			# сохраняем результаты ответов
 			result = Result(question=question, answer=answer, status=status, username_id=username_id, test_type=test_type)
 			result.save()
 			# корректируем параметры

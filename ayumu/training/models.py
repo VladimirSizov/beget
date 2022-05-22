@@ -5,10 +5,7 @@ from django.contrib.auth.models import User
 
 class Result(models.Model):
 	""" результаты тестов """
-	TYPE_DICT = [
-		('ER', 'ER'),
-		('RE', 'RE')
-	]
+	TYPE_DICT = [('ER', 'ER'), ('RE', 'RE')]
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='results') # 57
 	answer = models.CharField(max_length=100)
 	question = models.CharField(max_length=100)
@@ -20,10 +17,7 @@ class Result(models.Model):
 
 class Current(models.Model):
 	""" текущие состояния пользователя """
-	TYPE_DICT = [
-		('ER', 'ER'),
-		('RE', 'RE')
-	]
+	TYPE_DICT = [('ER', 'ER'), ('RE', 'RE')]
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='currents')
 	tested_words = models.CharField(max_length=100, default=[])
 	test_type = models.CharField(max_length=2, choices=TYPE_DICT, default='ER') # True = eng-rus
@@ -40,6 +34,7 @@ class ENG(models.Model):
 	class Meta:
 		ordering = ('eng',)
 
+
 class RUS(models.Model):
 	""" слварь русских слов """
 	rus = models.CharField(max_length=100, unique=True)
@@ -50,3 +45,12 @@ class RUS(models.Model):
 	class Meta:
 		ordering = ('rus',)
 
+
+class Lexicon(models.Model):
+	""" статистика ответов тестирования """
+	word = models.CharField(max_length=100)
+	results = models.CharField(max_length=100, default=[])
+	percent = models.IntegerField(default=50)
+	attempts = models.IntegerField(default=0)
+	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lexicon')
+	objects = models.Manager()
