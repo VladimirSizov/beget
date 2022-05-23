@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .models import Result, Lexicon
+from .models import Result
 from .forms import InterviewForm
 from .inter import Interview, PreviousResult, StatAnsLex
 from .create_data import CreateData # используется для полное обновление словаря ENG_RUS в CreateData.upd_dict()

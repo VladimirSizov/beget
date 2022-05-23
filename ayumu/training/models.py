@@ -22,6 +22,8 @@ class Current(models.Model):
 	tested_words = models.CharField(max_length=100, default=[])
 	test_type = models.CharField(max_length=2, choices=TYPE_DICT, default='ER') # True = eng-rus
 	type_increment = models.IntegerField(default=2) # обратный отчет попыток в этой языковой форме (ER или RE)
+	last_word_eng = models.IntegerField(default=0) # id последнее изученное слово ENG
+	last_word_rus = models.IntegerField(default=0) # id последнее изученное слово RUS
 	objects = models.Manager()
 
 
@@ -48,9 +50,11 @@ class RUS(models.Model):
 
 class Lexicon(models.Model):
 	""" статистика ответов тестирования """
+	TYPE_DICT = [('ER', 'ER'), ('RE', 'RE')]
 	word = models.CharField(max_length=100)
 	results = models.CharField(max_length=100, default=[])
 	percent = models.IntegerField(default=0)
 	attempts = models.IntegerField(default=0)
+	test_type = models.CharField(max_length=2, choices=TYPE_DICT, default='ER')  # True = eng-rus
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lexicon')
 	objects = models.Manager()

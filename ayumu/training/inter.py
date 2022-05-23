@@ -56,6 +56,7 @@ class StatAnsLex():
 		lexicon.results = results
 		lexicon.percent = self.update_percent()
 		lexicon.attempts = self.attempts
+		lexicon.test_type = Current.objects.get(username_id=self.user_id).test_type
 		lexicon.save()
 
 
@@ -144,25 +145,17 @@ class Interview():
 		current = Current.objects.get(username_id=self.user_id)
 		# осталось раз для этого типа (ER или RE)
 		type_increment = Current.objects.get(username_id=self.user_id).type_increment
-		print('type_increment')
-		print(type_increment)
 		test_type = ''
 		if type_increment == 0:
 			# базовое количество подходов в одной языковой группе при смене языковой группы
 			current.type_increment = 1 + 1
 			test_type = Current.objects.get(username_id=self.user_id).test_type  # текущий тип тестирования
-			print('test_type')
-			print(test_type)
 			# меняем язык
 			if test_type == 'ER':
 				current.test_type = 'RE'
-				print('test_type')
-				print(test_type)
 			if test_type == 'RE':
 				current.test_type  = 'ER'
-				print('test_type')
-				print(test_type)
-		create_test = CreateTest(test_type)
+		create_test = CreateTest(self.request, test_type)
 		tested_words = create_test.get_id_words()
 		current.type_increment -= 1
 		current.tested_words = tested_words
