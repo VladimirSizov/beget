@@ -22,11 +22,8 @@ def interview(request):
 			previous = PreviousResult(request)
 			previous.test_type = result.test_type
 			previous.question = result.question
-			arr_correct_answers = previous.get_correct_answer()
-			correct_answers = ''
-			for element in arr_correct_answers:
-				correct_answers += element + ', '
-			previous_result = result.question + ' - ' + correct_answers[:-2]
+			correct_answers = previous.get_correct_answer()
+			previous_result = result.question + ' - ' + correct_answers
 	except:
 		previous_result = ''
 	# получаем слово для запроса

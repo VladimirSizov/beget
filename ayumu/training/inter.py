@@ -10,16 +10,29 @@ class StatAnsLex():
 		self.request = request
 		self.user_id = request.user.id
 		self.question = ''
+		self.question_id = ''
 		self.status = False
 		self.results = []
 		self.attempts = 0
 
-	# получаем предыдущие результаты,
+
+	# получить id  для question
+	def get_question_id(self):
+		try:
+			get_id = ENG.objects.get(eng=self.question).id
+			self.question_id = get_id
+		except:
+			get_id = RUS.objects.get(rus=self.question).id
+			self.question_id = get_id
+
+
+	# получаем предыдущие результаты, или создаём НОВУЮ строку в Lexicon
 	def check(self):
 		try:
 			lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question).results
 		except:
-			lexicon = Lexicon(username_id=self.user_id, word=self.question)
+			self.get_question_id()
+			lexicon = Lexicon(username_id=self.user_id, word=self.question, word_id=self.question_id)
 			lexicon.save()
 			lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question).results
 		return lexicon
@@ -49,7 +62,7 @@ class StatAnsLex():
 			self.attempts = attempts
 		return percent
 
-	# сохранение в бд
+	# сохранение в бд значений строк LEXICON
 	def save_result(self):
 		results = self.update_results()
 		lexicon = Lexicon.objects.filter(username_id=self.user_id).get(word=self.question)
@@ -84,7 +97,10 @@ class PreviousResult():
 			rus_relation = ENG.objects.filter(rus__id=rus_id)
 			for word in rus_relation:
 				arr.append(word.eng)
-		return arr
+		correct_answers = ''
+		for element in arr:
+			correct_answers += element + ', '
+		return correct_answers[:-2]
 
 
 
@@ -142,24 +158,31 @@ class Interview():
 
 	# создаем новый массив тестов
 	def get_array_test(self):
-		current = Current.objects.get(username_id=self.user_id)
 		# осталось раз для этого типа (ER или RE)
 		type_increment = Current.objects.get(username_id=self.user_id).type_increment
-		test_type = ''
+
 		if type_increment == 0:
+			current = Current.objects.get(username_id=self.user_id)
 			# базовое количество подходов в одной языковой группе при смене языковой группы
-			current.type_increment = 1 + 1
+			current.type_increment = 3 + 1
 			test_type = Current.objects.get(username_id=self.user_id).test_type  # текущий тип тестирования
 			# меняем язык
 			if test_type == 'ER':
 				current.test_type = 'RE'
 			if test_type == 'RE':
 				current.test_type  = 'ER'
+			# сохраняем
+			current.save()
+
+		# добавляем новые слова и сохраняем
+
+		test_type = Current.objects.get(username_id=self.user_id).test_type
 		create_test = CreateTest(self.request, test_type)
 		tested_words = create_test.get_id_words()
-		current.type_increment -= 1
+
+		current = Current.objects.get(username_id=self.user_id)
 		current.tested_words = tested_words
-		# сохраняем
+		current.type_increment -= 1
 		current.save()
 
 	# при неправильном ответе пользователя - получение правильных ответов, для строки пояснения
