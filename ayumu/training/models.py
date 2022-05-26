@@ -59,3 +59,4 @@ class Lexicon(models.Model):
 	test_type = models.CharField(max_length=2, choices=TYPE_DICT, default='ER')  # True = eng-rus
 	username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lexicon')
 	objects = models.Manager()
+

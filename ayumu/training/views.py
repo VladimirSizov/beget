@@ -3,11 +3,13 @@ from django.http import HttpResponseRedirect
 from .models import Result
 from .forms import InterviewForm
 from .inter import Interview, PreviousResult, StatAnsLex
+from .statistics import Statistics
 from .create_data import CreateData # используется для полное обновление словаря ENG_RUS в CreateData.upd_dict()
 
 
 # опрос
 def interview(request):
+	true_percent = Statistics(request).get_percentage_correct_answer() # процент правильн ответоы
 	username_id = request.user.id
 	# проверка предыдущий результат на правильный ответ
 	previous_result = ''
@@ -54,6 +56,6 @@ def interview(request):
 			return HttpResponseRedirect(request.path_info)
 	else:
 		form = InterviewForm()
-		context = {'previous_result': previous_result, 'question': question, 'form': form}
+		context = {'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
 		return render(request, 'training/interview.html', context)
 

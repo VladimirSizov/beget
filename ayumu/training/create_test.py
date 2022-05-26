@@ -42,7 +42,6 @@ class CreateTest():
 		self.test_dictionary = [] # заменить на []
 
 
-
 	# получить новые id слов для теста
 	def get_id_words(self):
 		self.extract_objects_result() # заполняем атрибут из QuerySet: self.extract_dict_result
@@ -72,8 +71,6 @@ class CreateTest():
 		print('self.test_dictionary')
 		print(self.test_dictionary)
 		return self.test_dictionary
-
-
 
 	# получить новые слова
 	def dict_word_new(self):
@@ -109,7 +106,6 @@ class CreateTest():
 					print('-----NEW_NEW')
 					print(id_new_word)
 
-
 	# подбор слов с низким %
 	def dict_word_low_percent(self):
 		if self.extract_dict_result:
@@ -141,95 +137,33 @@ class CreateTest():
 				print('-----OLD')
 				print(new_word)
 
-
-###########################
 	# слово, самые низкие показатели правильных_ответов/количеству показов
 	def black_sheep(self):
 		data_old_result = self.extract_dict_result
-		#print('black_sheep')
 		if data_old_result and len(data_old_result) > 5:
 			# отбираем 10% худших
 			rate = int(len(data_old_result) * 0.5)
-
 			slice_attempts = data_old_result.order_by('attempts')[:rate]
 			arr_low_attempts = []
-			#arr_low_attempts_att = []
 			for word in slice_attempts:
 				arr_low_attempts.append(word.word_id)
-				#arr_low_attempts_att.append(word.attempts)
-			#print(sorted(arr_low_attempts))
-			#print(sorted(arr_low_attempts_att))
-			#print()
-
 			slice_percent = data_old_result.order_by('percent')[:rate]
 			arr_low_percent = []
-			#arr_low_percent_per = []
 			for word in slice_percent:
 				arr_low_percent.append(word.word_id)
-				#arr_low_percent_per.append(word.percent)
-			#print(sorted(arr_low_percent))
-			#print(sorted(arr_low_percent_per))
 			# выбираем самый душный
 			bad_result = []
 			for word in arr_low_attempts:
 				if word in arr_low_percent:
 					bad_result.append(word)
-			#print('bad_result')
-			#print(bad_result)
 			if bad_result:
 				index = random.randint(0, len(bad_result) - 1)
 				new_word = bad_result[index]
-				#print("bad result")
-				#print(new_word)
 				if new_word not in self.test_dictionary:
 					self.test_dictionary.append(new_word)
 					print('-----BLSH')
 					print(new_word)
-			#
 
-			'''
-			rate = int(len(data_old_result) / 50)
-			print(rate)
-			# собираем варианты количества ответов
-			variant_indices = []
-			if data_old_result.filter(attempts__ls=rate):
-				data_old_result = data_old_result.filter(attempts__ls=rate)
-			#print((data_old_result))
-
-
-			for word in data_old_result:
-				index = word[4]
-				if (index < int(rate)) and (index not in variant_indices):
-					variant_indices.append(index)
-			# создаем словарь, где для каждого индекса свой список
-			break_for_indices = {}
-			for index in variant_indices:
-				break_for_indices[index] = []
-			# добавляем слова в словарь по индексам
-			for word in data_old_result:
-				index_word = word[4]
-				for i, diction in break_for_indices.items():
-					if i == index_word:
-						dict_for_append = diction
-						dict_for_append.append(word)
-						break_for_indices[i] = dict_for_append
-			# создаём список самых слов
-			bad = []
-			for key, value in break_for_indices.items():
-				sort_value = sorted(value, key=itemgetter(int(3)))
-				word = sort_value.pop(0)
-				bad.append(word)
-			if bad:
-				index_add = random.randint(0, len(bad) - 1)
-				new_word = bad[index_add]
-				if new_word not in self.test_dictionary:
-					self.test_dictionary.append(new_word)
-'''
-
-	# print('-----L/B')
-	# print(bad)
-
-###########################
 	# __________________вспомогательные_____________________
 
 	# количество слов протестированных
@@ -248,7 +182,6 @@ class CreateTest():
 			return low_percent
 		return 0
 
-
 	# подбор слов со значениями меньше заданных показателей:
 	# количества_показов, процент_правильных_ответов
 	def index_min_view_percent(self, view, percent):
@@ -261,7 +194,6 @@ class CreateTest():
 				index = random.randint(0, len(words) - 1)
 				new_word = words[index]
 				return new_word
-
 
 	# увеличивает значение id нового слова, и сохраняем в Current
 	def increase_id_new_word(self):
@@ -292,5 +224,4 @@ class CreateTest():
 	def extract_objects_result(self):
 		self.test_type = Current.objects.get(username_id=self.user_id).test_type
 		self.extract_dict_result = Lexicon.objects.filter(username_id=self.user_id, test_type=self.test_type)
-
 
