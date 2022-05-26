@@ -16,7 +16,7 @@ def interview(request):
 		result = Result.objects.filter(username_id=username_id).latest('datetime')
 		if result.status == True:
 			# информирование пользователя о правильном ответе
-			previous_result = 'ALL RIGHT!'
+			previous_result = '' # строка текста при правильном ответе, заполнить типа: "молодец, продолжай!"
 		if result.status == False:
 			# найти правильные и показать
 			previous = PreviousResult(request)

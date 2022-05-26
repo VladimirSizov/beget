@@ -1,4 +1,34 @@
+# -----NEW
+# НОВЫЕ СЛОВА изначальный показатель 50/50% (правильные/неправильные)
+# слово, значение которого пользователь ранее не вводил
+# / добавляютя при при наличии старых результатах до 20 слов с показателем менее 50%
+
+# -----LO%
+# ПЛОХИЕ РЕЗУЛЬТАТЫ
+# слово с самым низким показателем качества ответов (правильные/неправильные)
+# / добавляется всегда
+
+# -----BEG
+# НОВИЧОК мало изученное, не набравшее статистики
+# слово, которое показывалось менее 5-ти раз
+# / добавляется всегда
+
+# -----OLD
+# РАНДОМНЫЕ СТАРЫЕ
+# слово которые уже показывались ранее
+# / добавляютя при при наличии старых результатах до 20 слов с показателем менее 50%
+
+# -----BLSH
+# чтото среднее между LO% и BEG
+# слово, самые низкие показатели правильных_ответов/количеству показов на индекс ответов до [8]
+# / добавляютя при при наличии старых результатах до 20 слов с показателем менее 50%
+
+# -----------------
+# возможно в функции arrangement стоит добавить условия запуска вложенных функций
+
+
 import re
+import random
 from .models import Current, ENG, RUS, Lexicon
 
 class CreateTest():
@@ -23,9 +53,19 @@ class CreateTest():
 			# добавляем мало изученные слова
 			self.dict_word_low_percent()
 		else:
-
 			# добавляем новые слова
 			self.dict_word_new()
+			if self.index_min_percent(24, 71):
+				self.dict_word_new()
+			if self.index_min_percent(26, 81):
+				self.dict_word_new()
+			# добавляем малоизученные слова BEGINER
+			self.word_small_views()
+			# добавляем известные слова
+			for i in range(1, int(self.len_old_result()/50+1)): # исправить на 500+1
+				self.dict_word_old_random()
+			# добавляем слово, самые низкие показатели правильных_ответов/количеству показов
+				self.black_sheep()
 			# добавляем мало изученные слова
 			self.dict_word_low_percent()
 
@@ -34,43 +74,6 @@ class CreateTest():
 		return self.test_dictionary
 
 
-
-	# заполняем атрибут из QuerySet: self.extract_dict_result
-	def extract_objects_result(self):
-		self.extract_dict_result = Lexicon.objects.filter(username_id=self.user_id)
-		self.test_type = Current.objects.get(username_id=self.user_id).test_type
-
-
-	# показать количество слов, ниже определённого показателя % правильных ответов
-	def rate_percent(self, percent):
-		if self.extract_dict_result:
-			low_percent = len(self.extract_dict_result.filter(percent__lt=percent).all())
-			return low_percent
-		return 0
-
-
-	# подбор слов с низким %
-	def dict_word_low_percent(self):
-		if self.extract_dict_result:
-			id_new_word = self.extract_dict_result.order_by('percent')[0].word_id
-			if id_new_word not in self.test_dictionary:
-				self.test_dictionary.append(id_new_word)
-			print('-----LO%')
-			print(id_new_word)
-
-	# увеличивает значение id нового слова, и сохраняем в Current
-	def increase_id_new_word(self):
-		id_new_word = 0
-		new_data = Current.objects.get(username_id=self.user_id)
-		if self.test_type == 'ER':
-			new_data.last_word_eng = Current.objects.get(username_id=self.user_id).last_word_eng + 1
-			new_data.save()
-			id_new_word = Current.objects.get(username_id=self.user_id).last_word_eng
-		if self.test_type == 'RE':
-			new_data.last_word_rus = Current.objects.get(username_id=self.user_id).last_word_rus + 1
-			new_data.save()
-			id_new_word = Current.objects.get(username_id=self.user_id).last_word_rus
-		return id_new_word
 
 	# получить новые слова
 	def dict_word_new(self):
@@ -100,36 +103,194 @@ class CreateTest():
 						print('-----NEW')
 						print(id_new_word)
 			# первый запуск
-			if len(Lexicon.objects.filter(username_id=self.user_id, test_type=self.test_type)) < 10:
-				print("len")
-				print(len(Lexicon.objects.filter(username_id=self.user_id, test_type=self.test_type)))
+			if len(self.extract_dict_result) < 10:
 				if id_new_word not in self.test_dictionary:
 					self.test_dictionary.append(id_new_word)
 					print('-----NEW_NEW')
 					print(id_new_word)
 
 
+	# подбор слов с низким %
+	def dict_word_low_percent(self):
+		if self.extract_dict_result:
+			id_new_word = self.extract_dict_result.order_by('percent')[0].word_id
+			if id_new_word not in self.test_dictionary:
+				self.test_dictionary.append(id_new_word)
+			print('-----LO%')
+			print(id_new_word)
+
+	# новичок
+	def word_small_views(self):
+		new_word = self.index_min_view_percent(4, 100)
+		if new_word:
+			if new_word not in self.test_dictionary:
+				self.test_dictionary.append(new_word)
+		print('-----BEG')
+		print(new_word)
+
+	# подбор слов старых(временная функция - для теста)
+	def dict_word_old_random(self):
+		data_rate = self.index_min_percent(20, 51)
+		if data_rate:
+			data_old_result = self.extract_dict_result
+			if data_old_result:
+				index = random.randint(0, len(data_old_result) - 1)
+				new_word = data_old_result[index].word_id
+				if new_word not in self.test_dictionary:
+					self.test_dictionary.append(new_word)
+				print('-----OLD')
+				print(new_word)
+
+
+###########################
+	# слово, самые низкие показатели правильных_ответов/количеству показов
+	def black_sheep(self):
+		data_old_result = self.extract_dict_result
+		#print('black_sheep')
+		if data_old_result and len(data_old_result) > 5:
+			# отбираем 10% худших
+			rate = int(len(data_old_result) * 0.5)
+
+			slice_attempts = data_old_result.order_by('attempts')[:rate]
+			arr_low_attempts = []
+			#arr_low_attempts_att = []
+			for word in slice_attempts:
+				arr_low_attempts.append(word.word_id)
+				#arr_low_attempts_att.append(word.attempts)
+			#print(sorted(arr_low_attempts))
+			#print(sorted(arr_low_attempts_att))
+			#print()
+
+			slice_percent = data_old_result.order_by('percent')[:rate]
+			arr_low_percent = []
+			#arr_low_percent_per = []
+			for word in slice_percent:
+				arr_low_percent.append(word.word_id)
+				#arr_low_percent_per.append(word.percent)
+			#print(sorted(arr_low_percent))
+			#print(sorted(arr_low_percent_per))
+			# выбираем самый душный
+			bad_result = []
+			for word in arr_low_attempts:
+				if word in arr_low_percent:
+					bad_result.append(word)
+			#print('bad_result')
+			#print(bad_result)
+			if bad_result:
+				index = random.randint(0, len(bad_result) - 1)
+				new_word = bad_result[index]
+				#print("bad result")
+				#print(new_word)
+				if new_word not in self.test_dictionary:
+					self.test_dictionary.append(new_word)
+					print('-----BLSH')
+					print(new_word)
+			#
+
+			'''
+			rate = int(len(data_old_result) / 50)
+			print(rate)
+			# собираем варианты количества ответов
+			variant_indices = []
+			if data_old_result.filter(attempts__ls=rate):
+				data_old_result = data_old_result.filter(attempts__ls=rate)
+			#print((data_old_result))
+
+
+			for word in data_old_result:
+				index = word[4]
+				if (index < int(rate)) and (index not in variant_indices):
+					variant_indices.append(index)
+			# создаем словарь, где для каждого индекса свой список
+			break_for_indices = {}
+			for index in variant_indices:
+				break_for_indices[index] = []
+			# добавляем слова в словарь по индексам
+			for word in data_old_result:
+				index_word = word[4]
+				for i, diction in break_for_indices.items():
+					if i == index_word:
+						dict_for_append = diction
+						dict_for_append.append(word)
+						break_for_indices[i] = dict_for_append
+			# создаём список самых слов
+			bad = []
+			for key, value in break_for_indices.items():
+				sort_value = sorted(value, key=itemgetter(int(3)))
+				word = sort_value.pop(0)
+				bad.append(word)
+			if bad:
+				index_add = random.randint(0, len(bad) - 1)
+				new_word = bad[index_add]
+				if new_word not in self.test_dictionary:
+					self.test_dictionary.append(new_word)
+'''
+
+	# print('-----L/B')
+	# print(bad)
+
+###########################
+	# __________________вспомогательные_____________________
+
+	# количество слов протестированных
+	def len_old_result(self):
+		data = self.extract_dict_result
+		if data:
+			len_data = len(data)
+		else:
+			len_data = 0
+		return len_data
+
+	# показать количество слов, ниже определённого показателя % правильных ответов
+	def rate_percent(self, percent):
+		if self.extract_dict_result:
+			low_percent = len(self.extract_dict_result.filter(percent__lt=percent).all())
+			return low_percent
+		return 0
+
+
+	# подбор слов со значениями меньше заданных показателей:
+	# количества_показов, процент_правильных_ответов
+	def index_min_view_percent(self, view, percent):
+		if self.extract_dict_result:
+			data_old_result = self.extract_dict_result.filter(attempts__lt=view, percent__lt=percent)
+			words = []
+			for word in data_old_result:
+				words.append(word.word_id)
+			if words:
+				index = random.randint(0, len(words) - 1)
+				new_word = words[index]
+				return new_word
+
+
+	# увеличивает значение id нового слова, и сохраняем в Current
+	def increase_id_new_word(self):
+		id_new_word = 0
+		new_data = Current.objects.get(username_id=self.user_id)
+		if self.test_type == 'ER':
+			new_data.last_word_eng = Current.objects.get(username_id=self.user_id).last_word_eng + 1
+			new_data.save()
+			id_new_word = Current.objects.get(username_id=self.user_id).last_word_eng
+		if self.test_type == 'RE':
+			new_data.last_word_rus = Current.objects.get(username_id=self.user_id).last_word_rus + 1
+			new_data.save()
+			id_new_word = Current.objects.get(username_id=self.user_id).last_word_rus
+		return id_new_word
+
 	# допуск, макс кол-ва слов с определённым показателем % правильных ответов
 	def index_min_percent(self, max_amount, percent):
 		if self.extract_dict_result:
 			low_percent = len(self.extract_dict_result.filter(percent__lt=percent).all())
-			# print(low_percent)
 			if low_percent < max_amount:
 				return True
 			else:
 				return False
 
+	#__________________базовые_____________________
+
+	# заполняем атрибут из QuerySet: self.extract_dict_result
+	def extract_objects_result(self):
+		self.test_type = Current.objects.get(username_id=self.user_id).test_type
+		self.extract_dict_result = Lexicon.objects.filter(username_id=self.user_id, test_type=self.test_type)
 
 
-
-
-##########################
-"""
-
-	i = Lexicon.objects.filter(username_id='17')
-	i = len(i.filter(percent__gt=70).all())
-	print(len(i))
-
-
-
-"""

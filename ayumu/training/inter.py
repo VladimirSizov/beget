@@ -160,7 +160,6 @@ class Interview():
 	def get_array_test(self):
 		# осталось раз для этого типа (ER или RE)
 		type_increment = Current.objects.get(username_id=self.user_id).type_increment
-
 		if type_increment == 0:
 			current = Current.objects.get(username_id=self.user_id)
 			# базовое количество подходов в одной языковой группе при смене языковой группы
@@ -173,13 +172,10 @@ class Interview():
 				current.test_type  = 'ER'
 			# сохраняем
 			current.save()
-
 		# добавляем новые слова и сохраняем
-
 		test_type = Current.objects.get(username_id=self.user_id).test_type
 		create_test = CreateTest(self.request, test_type)
 		tested_words = create_test.get_id_words()
-
 		current = Current.objects.get(username_id=self.user_id)
 		current.tested_words = tested_words
 		current.type_increment -= 1
