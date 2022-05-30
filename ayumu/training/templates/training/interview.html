@@ -14,6 +14,9 @@
             {% csrf_token %}
             <p><input type="submit" value="send"></p>
         </form>
-        <h5>изученных слов: {{ all_w }} (+{{ today_w }} сегодня)</br>
-            ошибок в ответах: {{ true_percent }}%</h5>
+        <h5>
+            изученных слов: {{ all_w }} (сегодня +{{ today_w }})</br>
+            ошибок в ответах: {{ true_percent }}%</br>
+            всего попыток: {{ get_try }}
+        </h5>
 {% endblock %}

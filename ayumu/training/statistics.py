@@ -18,7 +18,6 @@ class Statistics():
 		if all > 0:
 			right = len(Result.objects.filter(username_id=self.user_id).filter(status=True))
 			percent = int(100 - (right * 100 / all))
-			print("true percent: " + str(percent))
 			return percent
 		return 0
 
@@ -34,6 +33,11 @@ class Statistics():
 		learned_words_today = len(Result.objects.filter(username_id=self.user_id, datetime__gt=day).values('question').distinct())
 		return {'all_w': all_learned_words, 'today_w': learned_words_today}
 
+	# попыток
+	def get_try(self):
+		if Result.objects.filter(username_id=self.user_id):
+			return len(Result.objects.filter(username_id=self.user_id))
+		return 0
 
 	# получить данные результатов
 	def get_result(self):

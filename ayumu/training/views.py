@@ -14,6 +14,7 @@ def interview(request):
 	all_w = Statistics(request).get_learned_words()['all_w']
 	today_w = Statistics(request).get_learned_words()['today_w']
 	true_percent = Statistics(request).get_percentage_correct_answer() # процент правильн ответов
+	get_try = Statistics(request).get_try()
 
 	# проверка предыдущий результат на правильный ответ
 	previous_result = ''
@@ -32,13 +33,7 @@ def interview(request):
 			value_wrong = CheckResponse(request, wrong)
 			try:
 				answer_words = value_wrong.get_values()
-				print("wrong")
-				print(wrong)
-				print("answer_words")
-				print(answer_words)
 				wrong_answers_result = wrong + ' - ' + answer_words
-				print("wrong_answers_result")
-				print(wrong_answers_result)
 			except:
 				wrong_answers_result = ''
 
@@ -46,17 +41,14 @@ def interview(request):
 			previous = PreviousResult(request)
 			previous.test_type = result.test_type
 			previous.question = result.question
-			correct_answers = previous.get_correct_answer()
-			print("correct_answers")
-			print(correct_answers)
-			previous_result = result.question + ' - ' + correct_answers
-			print("previous_result")
-			print(previous_result)
+			c_answers = previous.get_correct_answer()
+			previous_result = result.question + ' - ' + c_answers
 	except:
 		previous_result = ''
 	# получаем слово для запроса
 	interview = Interview(request)
 	question = interview.get_current_word()  # слово для запроса
+	print("question: " + str(question))
 	# если пользователь отправляет ответ
 	if request.method == 'POST':
 		# полное обновление словаря ENG_RUS
@@ -64,6 +56,7 @@ def interview(request):
 		form = InterviewForm(request.POST)
 		if form.is_valid():
 			answer = form.cleaned_data['answer']
+			print('answer: ' + str(answer))
 			status = False
 			test_type = interview.test_type
 			correct_answers = interview.get_correct_answer() # получаем список корректных ответов
@@ -82,6 +75,6 @@ def interview(request):
 			return HttpResponseRedirect(request.path_info)
 	else:
 		form = InterviewForm()
-		context = {'wrong_answers_result': wrong_answers_result, 'today_w': today_w, 'all_w': all_w, 'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
+		context = {'get_try': get_try, 'wrong_answers_result': wrong_answers_result, 'today_w': today_w, 'all_w': all_w, 'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
 		return render(request, 'training/interview.html', context)
 

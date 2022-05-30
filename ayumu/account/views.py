@@ -51,5 +51,6 @@ def register(request):
 @login_required # авторизован ли пользователь
 def dashboard(request):
 	return render(request, 'account/dashboard.html', {'section': 'dashboard'})
+	#return render(request, 'training/interview.html', {'section': 'dashboard'})
 
 
