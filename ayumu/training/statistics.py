@@ -13,10 +13,12 @@ class Statistics():
 	def get_percentage_correct_answer(self):
 		self.get_result()
 		all = len(self.data_results)
-		right = len(Result.objects.filter(username_id=self.user_id).filter(status=True))
-		percent = int(right * 100 / all)
-		print("true percent: " + str(percent))
-		return percent
+		if all > 0:
+			right = len(Result.objects.filter(username_id=self.user_id).filter(status=True))
+			percent = int(right * 100 / all)
+			print("true percent: " + str(percent))
+			return percent
+		return 0
 
 
 	# получить данные результатов
