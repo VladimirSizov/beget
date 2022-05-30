@@ -3,8 +3,8 @@
 {% block title %}INTERVIEW{% endblock %}
 
 {% block content %}
-        <h5>правильных ответов: {{ true_percent }}%</h5>
         <h3>{{ right }}</h3>
+        <h4>{{ wrong_answers_result }}</h4>
         <h4>{{ previous_result }}</h4>
         <h2><p>{{ question }}</p></h2>
         <form action="." method="post">
@@ -14,4 +14,6 @@
             {% csrf_token %}
             <p><input type="submit" value="send"></p>
         </form>
+        <h5>изученных слов: {{ all_w }} (+{{ today_w }} сегодня)</br>
+            ошибок в ответах: {{ true_percent }}%</h5>
 {% endblock %}

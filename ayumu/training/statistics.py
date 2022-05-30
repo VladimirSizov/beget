@@ -1,4 +1,6 @@
 from .models import Result
+from datetime import datetime, timedelta
+
 
 class Statistics():
 	""" статистика результатов пользователя """
@@ -9,16 +11,28 @@ class Statistics():
 		self.data_results = []
 
 
-	# процент правильных ответов
+	# процент ошибок в ответах
 	def get_percentage_correct_answer(self):
 		self.get_result()
 		all = len(self.data_results)
 		if all > 0:
 			right = len(Result.objects.filter(username_id=self.user_id).filter(status=True))
-			percent = int(right * 100 / all)
+			percent = int(100 - (right * 100 / all))
 			print("true percent: " + str(percent))
 			return percent
 		return 0
+
+	# изученных слов всего
+	def get_learned_words(self):
+		# определяем время за последние сутки
+		today = datetime.today()
+		day = today - timedelta(hours=23, minutes=59, seconds=59)
+		day = day.date()
+		# всего уникальных по 'question'
+		all_learned_words = len(Result.objects.filter(username_id=self.user_id).values('question').distinct())
+		# за сутки уникальных по 'question'
+		learned_words_today = len(Result.objects.filter(username_id=self.user_id, datetime__gt=day).values('question').distinct())
+		return {'all_w': all_learned_words, 'today_w': learned_words_today}
 
 
 	# получить данные результатов

@@ -2,17 +2,22 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .models import Result
 from .forms import InterviewForm
-from .inter import Interview, PreviousResult, StatAnsLex
+from .inter import Interview, PreviousResult, StatAnsLex, CheckResponse
 from .statistics import Statistics
 from .create_data import CreateData # используется для полное обновление словаря ENG_RUS в CreateData.upd_dict()
 
 
 # опрос
 def interview(request):
-	true_percent = Statistics(request).get_percentage_correct_answer() # процент правильн ответоы
 	username_id = request.user.id
+	# статистика
+	all_w = Statistics(request).get_learned_words()['all_w']
+	today_w = Statistics(request).get_learned_words()['today_w']
+	true_percent = Statistics(request).get_percentage_correct_answer() # процент правильн ответов
+
 	# проверка предыдущий результат на правильный ответ
 	previous_result = ''
+	wrong_answers_result = ''
 	try:
 		# получаем последний ответ
 		result = Result.objects.filter(username_id=username_id).latest('datetime')
@@ -20,12 +25,33 @@ def interview(request):
 			# информирование пользователя о правильном ответе
 			previous_result = '' # строка текста при правильном ответе, заполнить типа: "молодец, продолжай!"
 		if result.status == False:
-			# найти правильные и показать
+			# найти и показать у неправильного ответа его правильные значения
+			wrong = result.answer
+
+			test_type = result.test_type
+			value_wrong = CheckResponse(request, wrong)
+			try:
+				answer_words = value_wrong.get_values()
+				print("wrong")
+				print(wrong)
+				print("answer_words")
+				print(answer_words)
+				wrong_answers_result = wrong + ' - ' + answer_words
+				print("wrong_answers_result")
+				print(wrong_answers_result)
+			except:
+				wrong_answers_result = ''
+
+			# найти правильные и показать правильные значения
 			previous = PreviousResult(request)
 			previous.test_type = result.test_type
 			previous.question = result.question
 			correct_answers = previous.get_correct_answer()
+			print("correct_answers")
+			print(correct_answers)
 			previous_result = result.question + ' - ' + correct_answers
+			print("previous_result")
+			print(previous_result)
 	except:
 		previous_result = ''
 	# получаем слово для запроса
@@ -56,6 +82,6 @@ def interview(request):
 			return HttpResponseRedirect(request.path_info)
 	else:
 		form = InterviewForm()
-		context = {'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
+		context = {'wrong_answers_result': wrong_answers_result, 'today_w': today_w, 'all_w': all_w, 'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
 		return render(request, 'training/interview.html', context)
 
