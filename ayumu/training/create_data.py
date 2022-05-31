@@ -43,6 +43,7 @@ class CreateData():
 					rus_value = RUS.objects.get(rus=rus)
 					# добавляем связь многие ко многим
 					rus_value.english.add(eng_id)
+		print("UPD dict complete")
 
 	def test_dict(self):
 		# запросы к БД тестирование на ошибки

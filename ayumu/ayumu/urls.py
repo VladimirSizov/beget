@@ -6,6 +6,6 @@ from django.urls import path, include
 # здесь прописываем пути ко всем приложениям
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('account/', include('account.urls')),
-    path('account/training/', include('training.urls', namespace='training')),
+    path('', include('account.urls')),
+    path('training/', include('training.urls', namespace='training')),
 ]

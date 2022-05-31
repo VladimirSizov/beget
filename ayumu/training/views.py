@@ -9,6 +9,8 @@ from .create_data import CreateData # используется для полно
 
 # опрос
 def interview(request):
+	# полное обновление словаря ENG_RUS
+	#CreateData().upd_dict()
 	username_id = request.user.id
 	# статистика
 	all_w = Statistics(request).get_learned_words()['all_w']
@@ -28,7 +30,7 @@ def interview(request):
 		if result.status == False:
 			# найти и показать у неправильного ответа его правильные значения
 
-		
+
 			wrong = result.answer
 			value_wrong = CheckResponse(request, wrong)
 			try:
@@ -52,8 +54,6 @@ def interview(request):
 	print("question: " + str(question))
 	# если пользователь отправляет ответ
 	if request.method == 'POST':
-		# полное обновление словаря ENG_RUS
-		#CreateData.upd_dict()
 		form = InterviewForm(request.POST)
 		if form.is_valid():
 			answer = form.cleaned_data['answer']
