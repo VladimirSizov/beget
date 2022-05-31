@@ -27,15 +27,16 @@ def interview(request):
 			previous_result = '' # строка текста при правильном ответе, заполнить типа: "молодец, продолжай!"
 		if result.status == False:
 			# найти и показать у неправильного ответа его правильные значения
-			wrong = result.answer
 
-			test_type = result.test_type
+		
+			wrong = result.answer
 			value_wrong = CheckResponse(request, wrong)
 			try:
 				answer_words = value_wrong.get_values()
 				wrong_answers_result = wrong + ' - ' + answer_words
 			except:
 				wrong_answers_result = ''
+
 
 			# найти правильные и показать правильные значения
 			previous = PreviousResult(request)
@@ -47,7 +48,7 @@ def interview(request):
 		previous_result = ''
 	# получаем слово для запроса
 	interview = Interview(request)
-	question = interview.get_current_word()  # слово для запроса
+	question = interview.get_current_word() # слово для запроса
 	print("question: " + str(question))
 	# если пользователь отправляет ответ
 	if request.method == 'POST':
