@@ -1,6 +1,12 @@
 # https://proglib.io/p/kak-podruzhit-python-i-bazy-dannyh-sql-podrobnoe-rukovodstvo-2020-02-27/amp/
 from db_connect import *
 
+
+# удаление всех строк из таблиц:
+# training_eng
+# training_rus
+# training_rus_english
+'''
 i = "DELETE FROM training_eng" # удаление данных из таблицы
 execute_query(connection, i)
 i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_eng'" # обнуление инкремента
@@ -15,39 +21,37 @@ i = "DELETE FROM training_rus_english" # удаление данных из та
 execute_query(connection, i)
 i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_rus_english'" # обнуление инкремента
 execute_query(connection, i)
+'''
 
 
-
-# удаление всех строк из таблицы training_result
-# delet = "DELETE FROM training_result"
-# execute_query(connection, delet)
+# удаление всех строк из таблиц:
+# training_result
+# training_lexicon
+# training_current
+# account_profile
 '''
 i = "DELETE FROM training_result" # удаление данных из таблицы
 execute_query(connection, i)
 i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_result'" # обнуление инкремента
 execute_query(connection, i)
-'''
 
-
-'''
-i = "DELETE FROM training_translation" # удаление данных из таблицы
+i = "DELETE FROM training_lexicon" # удаление данных из таблицы
 execute_query(connection, i)
-i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_translation'" # обнуление инкремента
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_lexicon'" # обнуление инкремента
 execute_query(connection, i)
 
-create_dictionary_words = """
-INSERT INTO
-training_translation (eng, rus)
-VALUES
-(
-('say', 'сказать'),
-('say', 'говорить'),
-('say', 'слово'),
-('say', 'мнение');
-"""
-execute_query(connection, create_dictionary_words)
+i = "DELETE FROM training_current" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='training_current'" # обнуление инкремента
+execute_query(connection, i)
+
+i = "DELETE FROM account_profile" # удаление данных из таблицы
+execute_query(connection, i)
+i = "UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='account_profile'" # обнуление инкремента
+execute_query(connection, i)
 '''
 
+################### TEST ######################
 '''
 create_users_table = """
 CREATE TABLE IF NOT EXISTS users (
