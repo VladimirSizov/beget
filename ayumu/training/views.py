@@ -11,7 +11,9 @@ from .create_data import CreateData # используется для полно
 def interview(request):
 	# полное обновление словаря ENG_RUS
 	#CreateData().upd_dict()
+
 	username_id = request.user.id
+
 	# статистика
 	all_w = Statistics(request).get_learned_words()['all_w']
 	today_w = Statistics(request).get_learned_words()['today_w']
@@ -28,17 +30,15 @@ def interview(request):
 			# информирование пользователя о правильном ответе
 			previous_result = '' # строка текста при правильном ответе, заполнить типа: "молодец, продолжай!"
 		if result.status == False:
+
 			# найти и показать у неправильного ответа его правильные значения
-
-
 			wrong = result.answer
 			value_wrong = CheckResponse(request, wrong)
 			try:
-				answer_words = value_wrong.get_values()
-				wrong_answers_result = wrong + ' - ' + answer_words
+				ans_words = value_wrong.get_values()
+				wrong_answers_result = wrong + ' - ' + ans_words
 			except:
 				wrong_answers_result = ''
-
 
 			# найти правильные и показать правильные значения
 			previous = PreviousResult(request)
@@ -52,6 +52,7 @@ def interview(request):
 	interview = Interview(request)
 	question = interview.get_current_word() # слово для запроса
 	print("question: " + str(question))
+
 	# если пользователь отправляет ответ
 	if request.method == 'POST':
 		form = InterviewForm(request.POST)

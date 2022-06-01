@@ -112,8 +112,8 @@ class CreateTest():
 			id_new_word = self.extract_dict_result.order_by('percent')[0].word_id
 			if id_new_word not in self.test_dictionary:
 				self.test_dictionary.append(id_new_word)
-			print('-----LO%')
-			print(id_new_word)
+				print('-----LO%')
+				print(id_new_word)
 
 	# новичок
 	def word_small_views(self):
@@ -121,8 +121,8 @@ class CreateTest():
 		if new_word:
 			if new_word not in self.test_dictionary:
 				self.test_dictionary.append(new_word)
-		print('-----BEG')
-		print(new_word)
+				print('-----BEG')
+				print(new_word)
 
 	# подбор слов старых(временная функция - для теста)
 	def dict_word_old_random(self):
@@ -134,8 +134,8 @@ class CreateTest():
 				new_word = data_old_result[index].word_id
 				if new_word not in self.test_dictionary:
 					self.test_dictionary.append(new_word)
-				print('-----OLD')
-				print(new_word)
+					print('-----OLD')
+					print(new_word)
 
 	# слово, самые низкие показатели правильных_ответов/количеству показов
 	def black_sheep(self):
