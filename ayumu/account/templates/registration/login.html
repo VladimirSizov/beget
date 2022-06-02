@@ -7,7 +7,15 @@
     {% if form.errors %}
         <p>Your username and password didn't match. Please try again.</p>
     {% else %}
-        <p>Please, use the following form to log-in, or if you don't have an account <a href="{% url 'register' %}">register here</a></p>
+        <p>
+        «Словарь Вильяма Шекспира, по подсчету исследователей, составляет 12 000 слов.<br>
+        Словарь негра из людоедского племени Мумбо-Юмбо составляет 300 слов.<br>
+        Эллочка Щукина легко и свободно обходилась тридцатью.»<br>
+        Двенадцать стульев. И.Ильф Е.Петров<br><br>
+		Ayumu(Аюми) - имя шимпанзе, который способен мгновенно запомнить и затем воспроизвести порядок и место расположения на мониторе чисел от 1 до 9.<br><br>
+        Используйте AYUMU для расширения Вашего словарного запаса!<br><hr>
+        </p>
+        <p><br>Please, use the following form to log-in, or if you don't have an account <a href="{% url 'register' %}">register here</a></p>
     {% endif %}
     <div class="login-form">
         <form action="{% url 'login' %}" method="post">

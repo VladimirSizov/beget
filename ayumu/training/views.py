@@ -57,7 +57,7 @@ def interview(request):
 	if request.method == 'POST':
 		form = InterviewForm(request.POST)
 		if form.is_valid():
-			answer = form.cleaned_data['answer']
+			answer = form.cleaned_data['answer'].lower()
 			print('answer: ' + str(answer))
 			status = False
 			test_type = interview.test_type
