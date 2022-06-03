@@ -61,7 +61,7 @@ class CreateTest():
 			# добавляем малоизученные слова BEGINER
 			self.word_small_views()
 			# добавляем известные слова
-			for i in range(1, int(self.len_old_result()/50+1)): # исправить на 500+1
+			for i in range(1, int(self.len_old_result()/500+1)):
 				self.dict_word_old_random()
 			# добавляем слово, самые низкие показатели правильных_ответов/количеству показов
 				self.black_sheep()

@@ -1,11 +1,8 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, UserRegistrationForm
-from .models import Profile
-
 
 # авторизация пользователя
 def user_login(request):
@@ -51,6 +48,5 @@ def register(request):
 @login_required # авторизован ли пользователь
 def dashboard(request):
 	return render(request, 'account/dashboard.html', {'section': 'dashboard'})
-	#return render(request, 'training/interview.html', {'section': 'dashboard'})
 
 

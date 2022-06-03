@@ -11,6 +11,10 @@
             <span class="logo">AYUMU</span>
             <!-- проверка аутентификации -->
             {% if request.user.is_authenticated %}
+                <ul class="menu">
+                    <li {% if section == 'dashboard' %} class="selected" {% endif %}>
+                        <a href="{% url 'dashboard' %}">статистика</a>
+                </ul>
                <!--
                     <ul class="menu">
                     <li {% if section == 'dashboard' %} class="selected" {% endif %}>
@@ -19,7 +23,7 @@
                     <li {% if section == 'training' %} class="selected"{% endif %}>
                         <a href="training/">тренировка</a>
                     </li>
-                </ul>
+
                 -->
             {% endif %}
             <!--  -->
