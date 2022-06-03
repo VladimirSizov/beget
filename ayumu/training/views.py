@@ -19,6 +19,7 @@ def interview(request):
 	today_w = Statistics(request).get_learned_words()['today_w']
 	true_percent = Statistics(request).get_percentage_correct_answer() # процент правильн ответов
 	get_try = Statistics(request).get_try()
+	mos_dif = Statistics(request).most_difficult()
 
 	# проверка предыдущий результат на правильный ответ
 	previous_result = ''
@@ -77,6 +78,6 @@ def interview(request):
 			return HttpResponseRedirect(request.path_info)
 	else:
 		form = InterviewForm()
-		context = {'get_try': get_try, 'wrong_answers_result': wrong_answers_result, 'today_w': today_w, 'all_w': all_w, 'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
+		context = {'mos_dif': mos_dif, 'get_try': get_try, 'wrong_answers_result': wrong_answers_result, 'today_w': today_w, 'all_w': all_w, 'true_percent': true_percent, 'previous_result': previous_result, 'question': question, 'form': form}
 		return render(request, 'training/interview.html', context)
 

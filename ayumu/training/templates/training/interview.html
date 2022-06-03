@@ -19,4 +19,12 @@
             ошибок в ответах: {{ true_percent }}%</br>
             всего попыток: {{ get_try }}
         </h5>
+        <p>
+            <h4><br>самые мало изученные:</h4>
+            <h5>
+            {% for word in mos_dif %}
+                {{ word }}<br>
+            {% endfor %}
+            </h5>
+        </p>
 {% endblock %}
